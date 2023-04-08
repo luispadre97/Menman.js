@@ -4,7 +4,6 @@
   "description": "Menman.js es un marco de trabajo de JavaScript que se enfoca en la creación de aplicaciones web eficientes y escalables a través de la implementación de componentes modulares, inyección de dependencias, enrutamiento propio, manejo de estados, optimización del rendimiento y compatibilidad con Web Components. Este marco de trabajo también ofrece herramientas avanzadas de análisis de rendimiento para facilitar la optimización y la mejora del rendimiento de las aplicaciones web. Además, Menman.js incluye capacidades avanzadas de gestión de la memoria para garantizar una gestión eficiente de los recursos del sistema.",
   "main": "main.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
     "memmanjs",
@@ -15,8 +14,11 @@
   "author": "Luis Antonio Padre García",
   "license": "ISC",
   "devDependencies": {
+    "assemblyscript": "^0.27.1",
     "babel-preset": "^1.1.7",
     "grunt": "^1.6.1",
-    "grunt-babel": "^8.0.0"
+    "grunt-babel": "^8.0.0",
+    "vite": "^4.2.1",
+    "wasm-pack": "^0.11.0"
   }
 }
