@@ -1,51 +1,63 @@
 "use strict";
 
+import { triggerRerender } from './Hooks'
 // Variable global para almacenar el estado del framework
 const state = { components: {}, lastId: 0 };
 
 function createElement(tagName, attributes = {}, ...children) {
     const element = document.createElement(tagName);
-  
+
     // Añadir los atributos y eventos especificados al elemento
     if (attributes && typeof attributes === 'object') {
-      for (const [key, value] of Object.entries(attributes)) {
-        if (key === "className") {
-          element.classList.add(value);
-        } else if (key.startsWith("on")) {
-          element.addEventListener(key.slice(2).toLowerCase(), value);
-        } else if (key === "style") { // Agregar soporte para estilos
-          if (typeof value === "object") {
-            Object.assign(element.style, value);
-          } else {
-            element.setAttribute(key, value);
-          }
-        } else {
-          element.setAttribute(key, value);
+        for (const [key, value] of Object.entries(attributes)) {
+            if (key === "className") {
+                element.classList.add(value);
+            } else if (key.startsWith("on")) {
+                element.addEventListener(key.slice(2).toLowerCase(), value);
+            } else if (key === "style") {
+                if (typeof value === "object") {
+                    Object.assign(element.style, value);
+                } else {
+                    element.setAttribute(key, value);
+                }
+            } else {
+                element.setAttribute(key, value);
+            }
         }
-      }
     }
-  
+
     // Añadir los hijos especificados al elemento
     for (const child of children.flat()) {
-      if (typeof child === "string") {
-        element.appendChild(document.createTextNode(child));
-      } else if (child instanceof HTMLElement) {
-        element.appendChild(child);
-      } else if (child && typeof child === "object" && child.type === "text") {
-        element.appendChild(document.createTextNode(child.content));
-      }
+        if (typeof child === "string") {
+            element.appendChild(document.createTextNode(child));
+        } else if (child instanceof HTMLElement) {
+            element.appendChild(child);
+        } else if (child && typeof child === "object" && child.type === "text") {
+            // Aquí, verifica si el objeto hijo tiene una propiedad 'content' antes de intentar agregarla como nodo de texto
+            if (child.hasOwnProperty("content")) {
+                element.appendChild(document.createTextNode(child.content));
+            }
+        } else if (typeof child === "function") {
+            // Añadir esta parte para manejar las funciones JavaScript
+            const result = child();
+            element.appendChild(document.createTextNode(String(result)));
+        } else {
+            // Añadir esta parte para manejar las expresiones JavaScript
+            element.appendChild(document.createTextNode(String(child)));
+        }
     }
-  
+
     // Agregar un ID único al elemento
     const id = state.lastId++;
     element.setAttribute("data-memman-id", id);
-  
+
     // Almacenar el elemento en el estado del framework
     state.components[id] = element;
-  
+
     return element;
-  }
-  
+}
+
+
 function getState() {
     // Devuelve una cadena JSON que representa el estado actual del framework
     return JSON.stringify(state);
@@ -139,4 +151,4 @@ function useDynamicState(initialState) {
     return [state.value, state.setValue];
 }
 // Exporta las funciones necesarias para crear y renderizar componentes de Memman
-export { createElement, createComponent, renderMemmanComponent, updateState, useDynamicState};            
+export { createElement, createComponent, renderMemmanComponent, updateState, useDynamicState };            
