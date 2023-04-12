@@ -1,7 +1,7 @@
 import { version } from '../package.json';
 
 import { createElement, createComponent, renderMemmanComponent, updateState, useDynamicState } from './utils/createElement'
-import {createApp} from './utils/CreateApp'
+import {createApp} from './utils/createApp'
 import {
     memmanCreateSignal,
     memmanUseEffect,
