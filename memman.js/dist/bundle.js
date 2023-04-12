@@ -356,29 +356,29 @@ function useDynamicState(initialState) {
 }
 
 function createContext(deps) {
-    return {
-      get: function (key) {
-        return deps[key];
-      },
-    };
+  return {
+    get: function (key) {
+      return deps[key];
+    },
+  };
+}
+
+function createApp(rootComponent, deps = {}) {
+  const context = createContext(deps);
+
+  return {
+    mount: function mount(selector) {
+      const appElement = document.querySelector(selector);
+      appElement.innerHTML = ""; // Limpiar el contenido del elemento
+      const component = withCurrentComponent(rootComponent)(context);
+      if (component instanceof Node) {
+        appElement.appendChild(component); // Agregar el componente al DOM con el contexto
+      } else {
+        console.error("Error: el componente no es un objeto Node válido");
+      }
+    }
   }
-  
-  function createApp(rootComponent, deps = {}) {
-    const context = createContext(deps);
-  
-    return {
-      mount: function mount(selector) {
-        const appElement = document.querySelector(selector);
-        appElement.innerHTML = ""; // Limpiar el contenido del elemento
-        const component = withCurrentComponent(rootComponent)(context);
-        if (component instanceof Node) {
-          appElement.appendChild(component); // Agregar el componente al DOM con el contexto
-        } else {
-          console.error("Error: el componente no es un objeto Node válido");
-        }
-      },
-    };
-  }
+}
 
 function main () {
     console.log('version ' + version);
