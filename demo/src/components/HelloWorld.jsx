@@ -3,12 +3,14 @@ import { memmanCreateSignal, memmanUseEffect } from "../../../memman.js/dist/bun
 function HelloWorld(props) {
     const [count, setCount] = memmanCreateSignal(1);
 
+    // console.log(props,'props')
     memmanUseEffect(() => {
-        console.log('Componente montado');
+        console.log('Componente montado'+count);
         return () => {
           console.log('Componente desmontado');
         };
-      }, []);
+    }, []);
+
     function handleIncrement() {
         setCount((prevCount) => {
             console.log(prevCount)
@@ -21,18 +23,18 @@ function HelloWorld(props) {
             return prevCount - 1
         });
     }
-    console.log(count)
-    const VantButton = props.get('Button');
+    // console.log(count)
+    // const VantButton = props.get('Button');
     return (
-        <div>
+        <div><></>
             <p>El valor actual de count es {count}</p>
             <p>El valor actual de count es {` ${count}`}</p>
             <p>{` ${count}`}</p>
-            <button onClick={handleIncrement}>Incrementar</button>
+            <button style={{ backgroundColor: 'red', color: 'white' }} onClick={handleIncrement}>Incrementar</button>
             <button onClick={handleDecrement}>Decrementar</button>
             <Button1 />
             <Button2 />
-            <button type="button" class="van-button van-button--primary van-button--normal"><div class="van-button__content"><span class="van-button__text">Normal</span></div></button>
+
         </div>
     );
 }
@@ -40,21 +42,22 @@ function HelloWorld(props) {
 
 export default HelloWorld;
 
-function Button1() {
-    console.log(props, 'props')
-    const VantButton = props.get('Button');
+function Button1(props) {
+    // console.log(props, 'props')
+    // const VantButton = props.get('Button');
     return (
         <div>
             <>ARGS</>
         </div>
     )
 }
-const Button2=(props)=>{
-    console.log(props,'props')
-    const VantButton = props.get('Button');
-    return(
+
+const Button2 = (props) => {
+    // console.log(props,'props')
+    // const VantButton = props.get('Button');
+    return (
         <div>
-        <>ARGS</>
+            <>ARGS</>
         </div>
     )
 }

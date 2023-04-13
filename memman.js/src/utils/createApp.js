@@ -13,7 +13,6 @@ function createContext(deps) {
 
 export function createApp(rootComponent, deps = {}) {
   const context = createContext(deps);
-
   return {
     mount: function mount(selector) {
       const appElement = document.querySelector(selector);
@@ -22,8 +21,9 @@ export function createApp(rootComponent, deps = {}) {
       if (component instanceof Node) {
         appElement.appendChild(component); // Agregar el componente al DOM con el contexto
       } else {
-        console.error("Error: el componente no es un objeto Node válido");
+        console.log(component, 'componentxxx');
+        // console.error("Error: el componente no es un objeto Node válido");
       }
-    }
-  }
-};
+    },
+  };
+}
