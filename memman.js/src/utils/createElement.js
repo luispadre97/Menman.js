@@ -5,6 +5,11 @@ import { triggerRerender } from './Hooks'
 const state = { components: {}, lastId: 0 };
 
 function createElement(tagName, attributes = {}, ...children) {
+    try {
+        
+    } catch (error) {
+        console.error("args")
+    }
     const element = document.createElement(tagName);
 
     // Añadir los atributos y eventos especificados al elemento

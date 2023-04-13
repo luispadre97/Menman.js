@@ -1,25 +1,23 @@
-import { memmanCreateSignal, memmanUseEffect } from "../../../memman.js/dist/bundle";
+import { memmanCreateSignal, memmanUseEffect, withCurrentComponent } from "../../../memman.js/dist/bundle";
 
-function HelloWorld(props) {
+const HelloWorld = withCurrentComponent((props) => {
     const [count, setCount] = memmanCreateSignal(1);
 
     // console.log(props,'props')
     memmanUseEffect(() => {
-        console.log('Componente montado'+count);
+        console.log('Componente montado' + count);
         return () => {
-          console.log('Componente desmontado');
+            console.log('Componente desmontado');
         };
     }, []);
 
     function handleIncrement() {
         setCount((prevCount) => {
-            console.log(prevCount)
             return prevCount + 1
         });
     }
     function handleDecrement() {
         setCount((prevCount) => {
-            console.log(prevCount)
             return prevCount - 1
         });
     }
@@ -32,22 +30,26 @@ function HelloWorld(props) {
             <p>{` ${count}`}</p>
             <button style={{ backgroundColor: 'red', color: 'white' }} onClick={handleIncrement}>Incrementar</button>
             <button onClick={handleDecrement}>Decrementar</button>
-            <Button1 />
+            <Button1 data="soy"/>
             <Button2 />
 
         </div>
     );
-}
+})
 
 
 export default HelloWorld;
 
 function Button1(props) {
-    // console.log(props, 'props')
-    // const VantButton = props.get('Button');
+    const buttonProps = {
+        type: "button",
+        style: { "backgroundColor": 'red' },
+        onClick: () => { console.log("DEMO ") },
+    };
     return (
         <div>
-            <>ARGS</>
+            <button spreadProps={buttonProps}>s</button>
+            <>Button1</>
         </div>
     )
 }
@@ -57,7 +59,7 @@ const Button2 = (props) => {
     // const VantButton = props.get('Button');
     return (
         <div>
-            <>ARGS</>
+            <>Button2</>
         </div>
     )
 }

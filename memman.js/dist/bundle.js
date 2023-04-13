@@ -3,112 +3,111 @@ let currentComponent = null;
 let componentEffects = new Map();
 
 function getter(get) {
-  return new Proxy(
-      {},
-      {
-          get(target, prop) {
-              if (prop === "valueOf" || prop === "toString") {
-                  return get;
-              }
-              return Reflect.get(target, prop);
-          },
-          apply(target, thisArg, argumentsList) {
-              return get.apply(thisArg, argumentsList);
-          },
-      }
-  );
+    return new Proxy(
+        {},
+        {
+            get(target, prop) {
+                if (prop === "valueOf" || prop === "toString") {
+                    return get;
+                }
+                return Reflect.get(target, prop);
+            },
+            apply(target, thisArg, argumentsList) {
+                return get.apply(thisArg, argumentsList);
+            },
+        }
+    );
 }
 
 function withCurrentComponent(fn) {
-  return function (...args) {
-    const previousComponent = currentComponent;
-    currentComponent = {};
-    const result = fn(...args);
-    currentComponent = previousComponent;
-    return result;
-  };
+    return function (...args) {
+        const previousComponent = currentComponent;
+        currentComponent = {};
+        const result = fn(...args);
+        currentComponent = previousComponent;
+        return result;
+    };
 }
-
 function triggerRerender() {
-  componentEffects.forEach((effects, component) => {
-    effects.forEach((effect) => {
-      if (effect.cleanup) {
-        effect.cleanup();
-      }
-      effect.cleanup = effect.fn();
+    componentEffects.forEach((effects, component) => {
+        effects.forEach((effect) => {
+            if (effect.cleanup) {
+                effect.cleanup();
+            }
+            effect.cleanup = effect.fn();
+        });
     });
-  });
 }
 
 function memmanUseEffect(fn, deps) {
-  const component = currentComponent;
-  if (!component) {
-    throw new Error("No hay un componente actual establecido.");
-  }
-
-  const effect = {
-    fn,
-    deps,
-    cleanup: null,
-  };
-
-  const prevEffects = componentEffects.get(component) || new Set();
-  const prevEffect = Array.from(prevEffects).find((x) => x.fn === fn);
-
-  if (!prevEffect) {
-    prevEffects.add(effect);
-    componentEffects.set(component, prevEffects);
-    return;
-  }
-
-  if (!deps) {
-    effect.cleanup = prevEffect.cleanup;
-    prevEffects.add(effect);
-    componentEffects.set(component, prevEffects);
-    return;
-  }
-
-  const depsChanged = !prevEffect.deps || deps.some((dep, i) => !Object.is(dep, prevEffect.deps[i]));
-
-  if (depsChanged) {
-    if (prevEffect.cleanup) {
-      prevEffect.cleanup();
+    const component = currentComponent;
+    if (!component) {
+        throw new Error("No hay un componente actual establecido.");
     }
 
-    prevEffects.delete(prevEffect);
-    prevEffects.add(effect);
-    componentEffects.set(component, prevEffects);
-  } else {
-    prevEffects.add(prevEffect);
-    componentEffects.set(component, prevEffects);
-  }
+    const effect = {
+        fn,
+        deps,
+        cleanup: null,
+    };
+
+    const prevEffects = componentEffects.get(component) || new Set();
+    const prevEffect = Array.from(prevEffects).find((x) => x.fn === fn);
+
+    if (!prevEffect) {
+        prevEffects.add(effect);
+        componentEffects.set(component, prevEffects);
+        return;
+    }
+
+    if (!deps) {
+        effect.cleanup = prevEffect.cleanup;
+        prevEffects.add(effect);
+        componentEffects.set(component, prevEffects);
+        return;
+    }
+
+    const depsChanged = !prevEffect.deps || deps.some((dep, i) => !Object.is(dep, prevEffect.deps[i]));
+
+    if (depsChanged) {
+        if (prevEffect.cleanup) {
+            prevEffect.cleanup();
+        }
+
+        prevEffects.delete(prevEffect);
+        prevEffects.add(effect);
+        componentEffects.set(component, prevEffects);
+    } else {
+        prevEffects.add(prevEffect);
+        componentEffects.set(component, prevEffects);
+    }
 }
 
 function memmanCreateSignal(initialValue) {
-  if (initialValue === undefined || initialValue === null) {
-    throw new Error("Initial value cannot be null or undefined.");
-  }
-
-  let value = initialValue;
-  let effects = new Set();
-
-  function set(newValue) {
-    if (typeof newValue === "function") {
-      newValue = newValue(value);
+    if (initialValue === undefined || initialValue === null) {
+        throw new Error("Initial value cannot be null or undefined.");
     }
 
-    if (value !== newValue) {
-      value = newValue;
-      effects.forEach((effect) => effect());
-      triggerRerender();
+    let value = initialValue;
+    let effects = new Set();
+
+    function set(newValue) {
+        if (typeof newValue === "function") {
+            newValue = newValue(value);
+        }
+
+        if (value !== newValue) {
+            value = newValue;
+            effects.forEach((effect) => effect());
+            triggerRerender();
+        }
     }
-  }
 
-  function get() {
-    return value;
-  }
+    function get() {
+        return value;
+    }
 
-  return [getter(get), set];
+    return [getter(get), set];
 }
 
 // Variable global para almacenar el estado del framework
@@ -252,6 +251,7 @@ function createContext(deps) {
 
 function createApp(rootComponent, deps = {}) {
   const context = createContext(deps);
+  let rootComponentInstance = null;
   return {
     mount: function mount(selector) {
       const appElement = document.querySelector(selector);
@@ -259,16 +259,33 @@ function createApp(rootComponent, deps = {}) {
       const component = withCurrentComponent(rootComponent)(context);
       if (component instanceof Node) {
         appElement.appendChild(component); // Agregar el componente al DOM con el contexto
+        rootComponentInstance = component;
       } else {
-        console.log(component, 'componentxxx');
-        // console.error("Error: el componente no es un objeto Node válido");
+        console.error("Error: el componente no es un objeto Node válido");
+      }
+    },
+    triggerRerender: function triggerRerender$1() {
+      if (rootComponentInstance) {
+        triggerRerender();
+      } else {
+        console.error("Error: la aplicación no ha sido montada todavía");
       }
     },
   };
+}
+
+function withErrorBoundary(component, props) {
+    try {
+        return component(props);
+    } catch (error) {
+        console.error("Error in component:", error);
+        // Puedes devolver una representación de un componente de error aquí, si lo deseas.
+        return null;
+    }
 }
 
 function main () {
     console.log('version ' + version);
 }
 
-export { createApp, createComponent, createElement, main as default, memmanCreateSignal, memmanUseEffect, renderMemmanComponent, triggerRerender, updateState, useDynamicState, withCurrentComponent };
+export { createApp, createComponent, createElement, main as default, memmanCreateSignal, memmanUseEffect, renderMemmanComponent, triggerRerender, updateState, useDynamicState, withCurrentComponent, withErrorBoundary };

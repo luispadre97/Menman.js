@@ -12,7 +12,10 @@ function vitePluginMemman() {
       if (id.endsWith('.jsx') || (id.endsWith('.js') && code.includes('memman'))) {
         // Inyectar la importación de createElement
         code = `import { createElement as __createElement } from '/../memman.js/dist/bundle';\n` + code;
-        
+        code = `import { withCurrentComponent as __withCurrentComponent } from '/../memman.js/dist/bundle';\n` + code;
+
+        // Inyectar la importación de withErrorBoundary
+        code = `import { withErrorBoundary as __withErrorBoundary} from '/../memman.js/dist/bundle';\n` + code;
 
         const result = await transformAsync(code, {
           plugins: [syntaxJSX, transformMemmanJsx],

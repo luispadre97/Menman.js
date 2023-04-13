@@ -6,6 +6,7 @@ import {
    triggerRerender,
    withCurrentComponent
 } from './utils/Hooks';
+import {withErrorBoundary} from './utils/withErrorBoundary'
 export default function () {
     console.log('version ' + version);
 }
@@ -19,5 +20,6 @@ export {
     memmanCreateSignal,
     memmanUseEffect,
     triggerRerender,
-    withCurrentComponent
+    withCurrentComponent,
+    withErrorBoundary
 };
