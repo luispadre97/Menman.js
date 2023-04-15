@@ -2,7 +2,20 @@ export default function transformMemmanJsx({ types: t }) {
   const componentPropTypes = {};
   const FUNCTIONAL_COMPONENT = Symbol("FunctionalComponent");
 
-  
+  // Añade esta función para combinar las propiedades
+  function mergeProps(parentProps, childProps) {
+    return t.callExpression(
+      t.memberExpression(t.identifier("Object"), t.identifier("assign")),
+      [t.objectExpression([]), parentProps, childProps]
+    );
+  }
+
+  // Añade esta función para envolver componentes con un límite de error
+  function withErrorBoundary(component, props) {
+    return t.callExpression(t.identifier("__withErrorBoundary"), [component, props]);
+  }
+
+
   // Agregar esta función al plugin
   function validateProps(componentName, propTypes, props) {
     for (const key in propTypes) {
@@ -18,7 +31,7 @@ export default function transformMemmanJsx({ types: t }) {
   }
   function convertAttributes(attrs) {
     let spreadProps = null;
-  
+
     const props = attrs
       .filter((attr) => {
         if (t.isJSXAttribute(attr) && attr.name.name === "spreadProps") {
@@ -52,16 +65,16 @@ export default function transformMemmanJsx({ types: t }) {
           );
         }
       });
-  
+
     if (spreadProps) {
       props.unshift(t.spreadElement(spreadProps));
     }
-  
+
     return t.objectExpression(
       props.filter(Boolean).length > 0 ? props : [t.nullLiteral()]
     );
   }
-  
+
 
   function convertNode(node) {
     if (t.isJSXText(node)) {
@@ -126,8 +139,24 @@ export default function transformMemmanJsx({ types: t }) {
         if (propTypes) {
           validateProps(node.openingElement.name.name, propTypes, props);
         }
-        // Llama al componente funcional directamente en lugar de usar __createElement
-        return t.callExpression(type, args);
+
+        // Combina las propiedades del componente padre con las propiedades proporcionadas por el componente hijo
+        const combinedProps = mergeProps(t.identifier("__props"), props);
+
+        // Crea una función de flecha que define __props y luego llama al componente
+        const customComponentCall = t.arrowFunctionExpression(
+          [],
+          t.blockStatement([
+            t.variableDeclaration("const", [
+              t.variableDeclarator(t.identifier("__props"), t.objectExpression([])),
+            ]),
+            t.returnStatement(t.callExpression(type, args.concat(combinedProps))),
+          ])
+        );
+
+        // Devuelve la función de flecha envuelta en un límite de error
+        return t.callExpression(t.identifier("__withCurrentComponent"), [customComponentCall]);
+
       } else {
         // Caso contrario, sigue utilizando __createElement
         if (node.openingElement.selfClosing) {
@@ -138,6 +167,8 @@ export default function transformMemmanJsx({ types: t }) {
       }
     }
   }
+
+
 
 
   return {

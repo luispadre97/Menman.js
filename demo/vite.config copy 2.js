@@ -1,33 +1,3 @@
-// import { defineConfig } from 'vite';
-// import { transformAsync } from '@babel/core';
-// // import transformMemmanJsx from './../babel-plugin-transform-memman-jsx/dist/memman-transform';
-// import transformMemmanJsx from './memman-reactive-library/plugin/src/index';
-
-// import syntaxJSX from '@babel/plugin-syntax-jsx';
-
-// // Configuración del plugin
-// function vitePluginMemman() {
-//   return {
-//     name: 'vite-plugin-memman',
-//     enforce: 'pre',
-//     async transform(code, id) {
-//       if ((id.endsWith('.jsx') || id.endsWith(".memman")) ||(id.endsWith('.js') && code.includes('memman'))) {
-
-//         const result = await transformAsync(code, {
-//           plugins: [syntaxJSX, transformMemmanJsx],
-//         });
-
-//         return result.code;
-//       }
-//     },
-//   };
-// }
-
-// // Configuración de Vite
-// export default defineConfig({
-//   plugins: [vitePluginMemman()],
-// });
-
 import { defineConfig } from 'vite';
 import { transformAsync } from '@babel/core';
 // import transformMemmanJsx from './../babel-plugin-transform-memman-jsx/dist/memman-transform';
@@ -43,7 +13,7 @@ function vitePluginMemman() {
     async transform(code, id) {
       if ((id.endsWith('.jsx') || id.endsWith(".memman")) ||(id.endsWith('.js') && code.includes('memman'))) {
         // Inyectar la importación de createElement
-        code = `import { createElement as __createElement } from '/../memman.js/src/main.js';\n` + code;
+        code = `import { createElement as __createElement } from '/../memman2js/src/index';\n` + code;
         // code = `import { withCurrentComponent as __withCurrentComponent } from '/../memman.js/dist/bundle';\n` + code;
 
         // Inyectar la importación de withErrorBoundary

@@ -23,15 +23,16 @@ function getter(get) {
     );
 }
 
-export function withCurrentComponent(fn) {
+export function withCurrentComponent(fn, depsContext) {
     return function (...args) {
-        const previousComponent = currentComponent;
-        currentComponent = {};
-        const result = fn(...args);
-        currentComponent = previousComponent;
-        return result;
+      const previousComponent = currentComponent;
+      currentComponent = {};
+      const result = fn(...args, depsContext);
+      currentComponent = previousComponent;
+      return result;
     };
-}
+  }
+  
 
 // export function triggerRerender() {
 //   componentEffects.forEach((effects, component) => {

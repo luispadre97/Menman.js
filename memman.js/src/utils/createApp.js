@@ -3,6 +3,9 @@ import {
   triggerRerender as _triggerRerender,
 } from "./Hooks";
 
+let globalDepsContext = null;
+
+
 function createContext(deps) {
   return {
     get: function (key) {
@@ -12,13 +15,15 @@ function createContext(deps) {
 }
 
 export function createApp(rootComponent, deps = {}) {
+  globalDepsContext = createContext(deps);
   const context = createContext(deps);
+  
   let rootComponentInstance = null;
   return {
     mount: function mount(selector) {
       const appElement = document.querySelector(selector);
       appElement.innerHTML = ""; // Limpiar el contenido del elemento
-      const component = withCurrentComponent(rootComponent)(context);
+      const component = withCurrentComponent(rootComponent)(globalDepsContext);
       if (component instanceof Node) {
         appElement.appendChild(component); // Agregar el componente al DOM con el contexto
         rootComponentInstance = component;

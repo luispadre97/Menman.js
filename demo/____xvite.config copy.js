@@ -8,7 +8,7 @@ function vitePluginMemman() {
     name: 'vite-plugin-memman',
     enforce: 'pre',
     async transform(code, id) {
-      if (id.endsWith('.jsx') || id.endsWith('.js') && code.includes('memman')) {
+      if (id.endsWith('.jsx') || id.endsWith('.memman') || (id.endsWith('.js') && code.includes('memman'))) {
         // Inyectar la importación de createElement
         code = `import { createElement as __createElement } from '/../memman.js/dist/bundle';\n` + code;
 

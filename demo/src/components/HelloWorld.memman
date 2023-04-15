@@ -1,0 +1,20 @@
+const HelloWorld = (props) => {
+    // console.log(props, 'props')
+    // const depsContext = props.globalDepsContext;
+    // const VantButton = depsContext.get('Button');
+
+    return (
+        <div>
+            <p>Este es un componente de HelloWorld</p>
+            {/* <SimpleButton /> */}
+        </div>
+    );
+};
+export default HelloWorld;
+
+const SimpleButton = (props) => {
+    // console.log(props, 'props')
+    return (
+        <button >{"text"}</button>
+    );
+};

@@ -3,6 +3,11 @@ function transformMemmanJsx(_ref) {
   var componentPropTypes = {};
   var FUNCTIONAL_COMPONENT = Symbol("FunctionalComponent");
 
+  // Añade esta función para combinar las propiedades
+  function mergeProps(parentProps, childProps) {
+    return t.callExpression(t.memberExpression(t.identifier("Object"), t.identifier("assign")), [t.objectExpression([]), parentProps, childProps]);
+  }
+
   // Agregar esta función al plugin
   function validateProps(componentName, propTypes, props) {
     for (var key in propTypes) {
@@ -90,8 +95,15 @@ function transformMemmanJsx(_ref) {
         if (propTypes) {
           validateProps(node.openingElement.name.name, propTypes, props);
         }
-        // Llama al componente funcional directamente en lugar de usar __createElement
-        return t.callExpression(type, args);
+
+        // Combina las propiedades del componente padre con las propiedades proporcionadas por el componente hijo
+        var combinedProps = mergeProps(t.identifier("__props"), props);
+
+        // Crea una función de flecha que define __props y luego llama al componente
+        var customComponentCall = t.arrowFunctionExpression([], t.blockStatement([t.variableDeclaration("const", [t.variableDeclarator(t.identifier("__props"), t.objectExpression([]))]), t.returnStatement(t.callExpression(type, args.concat(combinedProps)))]));
+
+        // Devuelve la función de flecha envuelta en un límite de error
+        return t.callExpression(t.identifier("__withCurrentComponent"), [customComponentCall]);
       } else {
         // Caso contrario, sigue utilizando __createElement
         if (node.openingElement.selfClosing) {

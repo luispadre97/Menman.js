@@ -19,15 +19,15 @@ function getter(get) {
     );
 }
 
-function withCurrentComponent(fn) {
+function withCurrentComponent(fn, depsContext) {
     return function (...args) {
-        const previousComponent = currentComponent;
-        currentComponent = {};
-        const result = fn(...args);
-        currentComponent = previousComponent;
-        return result;
+      const previousComponent = currentComponent;
+      currentComponent = {};
+      const result = fn(...args, depsContext);
+      currentComponent = previousComponent;
+      return result;
     };
-}
+  }
 function triggerRerender() {
     componentEffects.forEach((effects, component) => {
         effects.forEach((effect) => {
@@ -114,6 +114,7 @@ function memmanCreateSignal(initialValue) {
 const state = { components: {}, lastId: 0 };
 
 function createElement(tagName, attributes = {}, ...children) {
+
     const element = document.createElement(tagName);
 
     // Añadir los atributos y eventos especificados al elemento
@@ -149,7 +150,11 @@ function createElement(tagName, attributes = {}, ...children) {
         } else if (typeof child === "function") {
             // Añadir esta parte para manejar las funciones JavaScript
             const result = child();
-            element.appendChild(document.createTextNode(String(result)));
+            if (result instanceof HTMLElement) {
+                element.appendChild(result);
+            } else {
+                element.appendChild(document.createTextNode(String(result)));
+            }
         } else {
             // Añadir esta parte para manejar las expresiones JavaScript
             element.appendChild(document.createTextNode(String(child)));
@@ -241,6 +246,9 @@ function useDynamicState(initialState) {
     return [state.value, state.setValue];
 }
 
+let globalDepsContext = null;
+
+
 function createContext(deps) {
   return {
     get: function (key) {
@@ -250,13 +258,14 @@ function createContext(deps) {
 }
 
 function createApp(rootComponent, deps = {}) {
-  const context = createContext(deps);
+  globalDepsContext = createContext(deps);
+  
   let rootComponentInstance = null;
   return {
     mount: function mount(selector) {
       const appElement = document.querySelector(selector);
       appElement.innerHTML = ""; // Limpiar el contenido del elemento
-      const component = withCurrentComponent(rootComponent)(context);
+      const component = withCurrentComponent(rootComponent)(globalDepsContext);
       if (component instanceof Node) {
         appElement.appendChild(component); // Agregar el componente al DOM con el contexto
         rootComponentInstance = component;
