@@ -5,11 +5,7 @@ import { triggerRerender } from './Hooks'
 const state = { components: {}, lastId: 0 };
 
 function createElement(tagName, attributes = {}, ...children) {
-    try {
-        
-    } catch (error) {
-        console.error("args")
-    }
+
     const element = document.createElement(tagName);
 
     // Añadir los atributos y eventos especificados al elemento
@@ -45,7 +41,11 @@ function createElement(tagName, attributes = {}, ...children) {
         } else if (typeof child === "function") {
             // Añadir esta parte para manejar las funciones JavaScript
             const result = child();
-            element.appendChild(document.createTextNode(String(result)));
+            if (result instanceof HTMLElement) {
+                element.appendChild(result);
+            } else {
+                element.appendChild(document.createTextNode(String(result)));
+            }
         } else {
             // Añadir esta parte para manejar las expresiones JavaScript
             element.appendChild(document.createTextNode(String(child)));
