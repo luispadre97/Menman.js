@@ -7,6 +7,8 @@ import {
    withCurrentComponent
 } from './utils/Hooks';
 import {withErrorBoundary} from './utils/withErrorBoundary'
+import {createMemmaLive} from './utils/japg/liveHooks'
+
 export default function () {
     console.log('version ' + version);
 }
@@ -21,5 +23,6 @@ export {
     memmanUseEffect,
     triggerRerender,
     withCurrentComponent,
-    withErrorBoundary
+    withErrorBoundary,
+    createMemmaLive
 };

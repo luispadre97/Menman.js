@@ -1,65 +1,37 @@
-import { memmanCreateSignal, memmanUseEffect, withCurrentComponent } from "../../../memman.js/dist/bundle";
+import { createMemmaLive } from "../../../memman.js/dist/bundle";
 
-const HelloWorld = withCurrentComponent((props) => {
-    const [count, setCount] = memmanCreateSignal(1);
+const HelloWorld = (props) => {
+  const { useLiveState, useLiveEffect } = createMemmaLive();
 
-    // console.log(props,'props')
-    memmanUseEffect(() => {
-        console.log('Componente montado' + count);
-        return () => {
-            console.log('Componente desmontado');
-        };
-    }, []);
+  const [state, setState] = useLiveState({ count: 0 });
 
-    function handleIncrement() {
-        setCount((prevCount) => {
-            return prevCount + 1
-        });
-    }
-    function handleDecrement() {
-        setCount((prevCount) => {
-            return prevCount - 1
-        });
-    }
-    // console.log(count)
-    // const VantButton = props.get('Button');
-    return (
-        <div><></>
-            <p>El valor actual de count es {count}</p>
-            <p>El valor actual de count es {` ${count}`}</p>
-            <p>{` ${count}`}</p>
-            <button style={{ backgroundColor: 'red', color: 'white' }} onClick={handleIncrement}>Incrementar</button>
-            <button onClick={handleDecrement}>Decrementar</button>
-            <Button1 data="soy"/>
-            <Button2 />
+  function handleClick() {
+    setState({ count: state.count + 1 });
+  }
 
-        </div>
-    );
-})
+  useLiveEffect(() => {
+    console.log(`Current count: ${state.count}`);
+      let intervalId;
+        intervalId = setInterval(() => {
+          setState({ count: state.count + 1 });
+        }, 1000);
+      return () => clearInterval(intervalId);
+  }, ['count']);
 
+  return (
+    <div>
+      Count: `Current count: ${state.count}`
+      <button onClick={handleClick}>Increment</button>
+    </div>
+  );
+  
+};
 
 export default HelloWorld;
 
-function Button1(props) {
-    const buttonProps = {
-        type: "button",
-        style: { "backgroundColor": 'red' },
-        onClick: () => { console.log("DEMO ") },
-    };
-    return (
-        <div>
-            <button spreadProps={buttonProps}>s</button>
-            <>Button1</>
-        </div>
-    )
-}
 
-const Button2 = (props) => {
-    // console.log(props,'props')
-    // const VantButton = props.get('Button');
-    return (
-        <div>
-            <>Button2</>
-        </div>
-    )
-}
+
+
+
+
+
