@@ -1,0 +1,26 @@
+{
+  "name": "Luis",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/core": "^7.21.4",
+    "@babel/plugin-syntax-jsx": "^7.21.4",
+    "babel-cli": "^6.26.0",
+    "grunt-contrib-uglify": "^5.2.2",
+    "vite": "^4.2.1",
+    "vite-plugin-babel": "^1.1.3"
+  },
+  "dependencies": {
+    "esbuild": "0.17.15",
+    "vant": "^4.1.2"
+  }
+}
