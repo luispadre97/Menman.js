@@ -1,15 +1,53 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 
 <head>
-    <title></title>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Grayscale Filter Example</title>
 </head>
 
 <body>
-    <div id="app"></div>
-    <script src="./src/main.js" type="module"></script>
+  <canvas id="canvas"></canvas>
+  <button id="applyGrayscale">Apply Grayscale Filter</button>
+  <!-- <script src="src/grayscaleWorker/index.js" type="module"></script> -->
+  <!-- <script src="src/searchWorker/index.js" type="module"></script> -->
+
+  <!-- <script src="src/demo/xmain.js" type="module">ss</script> -->
+  <div id="app"></div>
+  <script src="src/observadores/main.js" type="module"></script>
 </body>
 
 </html>
+<!-- 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Form Validation Example</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <h1>Registration Form</h1>
+  <form id="registrationForm" novalidate>
+    <label for="username">Username:</label>
+    <input type="text" id="username" name="username" required>
+    <span class="error" id="usernameError"></span>
+    <br>
+    <label for="email">Email:</label>
+    <input type="email" id="email" name="email" required>
+    <span class="error" id="emailError"></span>
+    <br>
+    <label for="password">Password:</label>
+    <input type="password" id="password" name="password" required>
+    <span class="error" id="passwordError"></span>
+    <br>
+    <label for="confirmPassword">Confirm Password:</label>
+    <input type="password" id="confirmPassword" name="confirmPassword" required>
+    <span class="error" id="confirmPasswordError"></span>
+    <br>
+    <button type="submit">Register</button>
+  </form>
+
+  <script src="src/csvGeneratorWorker/index.js" type="module"></script>
+</body>
+</html> -->

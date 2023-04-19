@@ -1,5 +1,5 @@
 {
-  "name": "Luis",
+  "name": "JOSE",
   "version": "1.0.0",
   "description": "",
   "main": "main.js",
@@ -15,7 +15,6 @@
     "@babel/core": "^7.21.4",
     "@babel/plugin-syntax-jsx": "^7.21.4",
     "babel-cli": "^6.26.0",
-    "grunt-contrib-uglify": "^5.2.2",
     "vite": "^4.2.1",
     "vite-plugin-babel": "^1.1.3"
   },
